@@ -17,7 +17,7 @@
 - 🟢 51–99%
 - ✅ 100%
 
-✅ **Remaining column** to show how many words are left for each letter
+✅ **Left** column to show how many words are left for each letter
 
 ✅ Progress table with:
 - All hex letters
@@ -32,7 +32,7 @@
 
 ## 📸 Preview
 
-![preview](preview.png) <!-- Add your own screenshot if you'd like -->
+![preview](preview.png) 
 
 ---
 
@@ -40,12 +40,12 @@
 
 1. Clone or download this repository  
 2. Open `chrome://extensions/` in Chrome  
-3. Enable **Developer Mode** (top-right)  
+3. Enable **Developer Mode** 
 4. Click **"Load unpacked"**  
-5. Select the extension folder (with `manifest.json`)
+5. Select the extension folder 
 
 > 🎯 Make sure all files are in place:  
-> `manifest.json`, `popup.html`, `popup.js`, `content.js`, `background.js`, and optional `icon.png`
+> `manifest.json`, `popup.html`, `popup.js`, `content.js`, `background.js`
 
 ---
 
