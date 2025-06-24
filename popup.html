@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Starting Letter Tracker</title>
+  <style>
+    body { font-family: Arial; padding: 10px; width: 380px; }
+    table { width: 100%; border-collapse: collapse; font-size: 13px; }
+    th, td { border: 1px solid #ccc; padding: 4px; text-align: center; }
+    th.letter { width: 40px; }
+
+    /* Heatmap Styles */
+    .heat-none  { background: #fbe9e7; }
+    .heat-low   { background: #ffccbc; }
+    .heat-mid   { background: #ffe082; }
+    .heat-good  { background: #aed581; }
+    .heat-full  { background: #81c784; font-weight: bold; }
+</style>
+</head>
+<body>
+  <h3>Your Progress</h3>
+  <table id="startTable">
+    <thead>
+      <tr>
+        <th class="letter">Letter</th>
+        <th>4</th><th>5</th><th>6</th><th>7</th><th>8</th><th>9</th><th>10</th>
+        <th>Total</th>
+        <th>Left</th>
+      </tr>
+    </thead>
+    <tbody id="startBody"></tbody>
+  </table>
+
+  <div id="legend" style="margin-top:10px; font-size: 12px;">
+  <span style="background:#fbe9e7; padding:4px;">0%</span>
+  <span style="background:#ffccbc; padding:4px;">1-25%</span>
+  <span style="background:#ffe082; padding:4px;">26-50%</span>
+  <span style="background:#aed581; padding:4px;">51-99%</span>
+  <span style="background:#81c784; padding:4px;">100%</span>
+</div>
+</body>
+<script src="popup.js"></script>
+</html>
