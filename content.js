@@ -1,3 +1,44 @@
+function isExtensionContextValid() {
+  try {
+    // Try to access chrome.runtime.id to check if context is valid
+    return chrome.runtime && chrome.runtime.id;
+  } catch (error) {
+    return false;
+  }
+}
+
+function safeRuntimeMessage(message, callback, retryCount = 0) {
+  if (!isExtensionContextValid()) {
+    console.warn("Extension context is invalid, skipping message:", message.type);
+    
+    if (retryCount < 3) {
+      console.log(`Attempting to recover extension context (attempt ${retryCount + 1}/3)`);
+      setTimeout(() => {
+        safeRuntimeMessage(message, callback, retryCount + 1);
+      }, 1000 * (retryCount + 1)); // Exponential backoff
+    } else {
+      console.warn("Extension context recovery failed after 3 attempts");
+    }
+    return;
+  }
+
+  try {
+    chrome.runtime.sendMessage(message, (response) => {
+      if (chrome.runtime.lastError) {
+        console.warn("SendMessage failed:", chrome.runtime.lastError.message);
+        // Try to reload the page
+        if (chrome.runtime.lastError.message.includes("context invalidated")) {
+          console.log("Extension context invalidated - consider refreshing the page");
+        }
+      } else if (callback) {
+        callback(response);
+      }
+    });
+  } catch (error) {
+    console.warn("Failed to send runtime message:", error.message);
+  }
+}
+
 function updateStartingLetterCounts() {
   const wordElements = document.querySelectorAll("#discoveredText li p");
   const hexLetters = Array.from(document.querySelectorAll("#hexGrid p"))
@@ -29,11 +70,16 @@ function updateStartingLetterCounts() {
     }
   });
 
-  chrome.runtime.sendMessage({
+  const todayKey = new Date().toISOString().split("T")[0]; //Unique identifier for a puzzle each day
+
+  safeRuntimeMessage({
     type: "saveCounts",
+    key: todayKey,
     counts,
     hexLetters,
     centerLetter
+  }, (res) => {
+    console.log("Counts saved:", res);
   });
 }
 
@@ -59,19 +105,48 @@ function extractHintData() {
     }
   });
 
-  chrome.runtime.sendMessage({
+  const todayKey = new Date().toISOString().split("T")[0]; //Unique identifier for a puzzle each day
+
+  safeRuntimeMessage({
     type: "saveHintData",
+    key: todayKey,
     hints
+  }, (res) => {
+    console.log("Hint data saved:", res);
   });
 }
 
-const observer = new MutationObserver(updateStartingLetterCounts);
-observer.observe(document.getElementById("discoveredText"), {
-  childList: true,
-  subtree: true
-});
+// To ensure the extension context is valid before setting up observers
+function initializeExtension() {
+  if (!isExtensionContextValid()) {
+    console.warn("Extension context is not valid, cannot initialize");
+    return;
+  }
+
+  const discoveredTextEl = document.getElementById("discoveredText");
+  if (discoveredTextEl) {
+    const observer = new MutationObserver(updateStartingLetterCounts);
+    observer.observe(discoveredTextEl, {
+      childList: true,
+      subtree: true
+    });
+  }
+
+  // Initial data extraction
+  updateStartingLetterCounts();
+  extractHintData();
+}
+
+if (document.readyState === 'loading') {
+  document.addEventListener('DOMContentLoaded', initializeExtension);
+} else {
+  initializeExtension();
+}
 
 window.addEventListener("load", () => {
-  updateStartingLetterCounts();
-  extractHintData(); 
+  // Double-check on window load in case DOMContentLoaded missed anything
+  if (isExtensionContextValid()) {
+    updateStartingLetterCounts();
+    extractHintData();
+  }
 });

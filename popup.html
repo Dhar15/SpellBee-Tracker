@@ -3,10 +3,55 @@
 <head>
   <title>Starting Letter Tracker</title>
   <style>
-    body { font-family: Arial; padding: 10px; width: 380px; }
-    table { width: 100%; border-collapse: collapse; font-size: 13px; }
-    th, td { border: 1px solid #ccc; padding: 4px; text-align: center; }
-    th.letter { width: 40px; }
+    body {
+      font-family: Arial;
+      padding: 10px;
+      width: 380px;
+    }
+
+    .header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 10px;
+    }
+
+    #refreshBtn {
+      background: none;
+      border: none;
+      padding: 5px;
+      cursor: pointer;
+      border-radius: 50%;
+      transition: background 0.2s;
+    }
+
+    #refreshBtn:hover {
+      background: #eaeaea;
+    }
+
+    #refreshIcon {
+      transition: transform 0.3s ease;
+    }
+
+    #refreshBtn:active #refreshIcon {
+      transform: rotate(360deg);
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 13px;
+    }
+
+    th, td {
+      border: 1px solid #ccc;
+      padding: 4px;
+      text-align: center;
+    }
+
+    th.letter {
+      width: 40px;
+    }
 
     /* Heatmap Styles */
     .heat-none  { background: #fbe9e7; }
@@ -14,10 +59,19 @@
     .heat-mid   { background: #ffe082; }
     .heat-good  { background: #aed581; }
     .heat-full  { background: #81c784; font-weight: bold; }
-</style>
+  </style>
 </head>
 <body>
-  <h3>Your Progress</h3>
+  <div class="header">
+    <h3 style="margin: 0;">Your Progress</h3>
+    <button id="refreshBtn" title="Refresh progress">
+      <svg id="refreshIcon" xmlns="http://www.w3.org/2000/svg" height="20" viewBox="0 0 24 24" width="20" fill="#555">
+        <path d="M0 0h24v24H0z" fill="none"/>
+        <path d="M17.65 6.35A7.95 7.95 0 0012 4a8 8 0 100 16 8 8 0 007.94-7h-2.02a6 6 0 11-1.27-4.65l-2.34 2.33H20V4l-2.35 2.35z"/>
+      </svg>
+    </button>
+  </div>
+
   <table id="startTable">
     <thead>
       <tr>
@@ -30,13 +84,14 @@
     <tbody id="startBody"></tbody>
   </table>
 
-  <div id="legend" style="margin-top:10px; font-size: 12px;">
-  <span style="background:#fbe9e7; padding:4px;">0%</span>
-  <span style="background:#ffccbc; padding:4px;">1-25%</span>
-  <span style="background:#ffe082; padding:4px;">26-50%</span>
-  <span style="background:#aed581; padding:4px;">51-99%</span>
-  <span style="background:#81c784; padding:4px;">100%</span>
-</div>
+  <div id="legend" style="margin-top: 10px; font-size: 12px;">
+    <span style="background:#fbe9e7; padding:4px;">0%</span>
+    <span style="background:#ffccbc; padding:4px;">1-25%</span>
+    <span style="background:#ffe082; padding:4px;">26-50%</span>
+    <span style="background:#aed581; padding:4px;">51-99%</span>
+    <span style="background:#81c784; padding:4px;">100%</span>
+  </div>
+
+  <script src="popup.js"></script>
 </body>
-<script src="popup.js"></script>
 </html>
