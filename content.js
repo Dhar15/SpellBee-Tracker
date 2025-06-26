@@ -88,6 +88,23 @@ function extractHintData() {
   if (!hintTable) return;
 
   const rows = hintTable.querySelectorAll("tbody tr");
+  const headerRow = hintTable.querySelector("thead tr");
+  if (!headerRow) return;
+  
+  const headers = Array.from(headerRow.querySelectorAll("th"));
+  let sumColumnIndex = -1;
+
+  // Find the index of the '∑' column in the header
+  headers.forEach((th, index) => {
+    if (th.textContent.trim() === "∑") {
+      sumColumnIndex = index;
+    }
+  });
+
+  if (sumColumnIndex === -1) {
+    console.warn("Could not find '∑' column in the hint table header.");
+  }
+
   const hints = {};
 
   rows.forEach(row => {
@@ -96,11 +113,21 @@ function extractHintData() {
     if (!letter || letter === "∑") return;
 
     hints[letter] = {};
-    for (let i = 1; i <= 7; i++) {
-      const len = i + 3;
-      const val = cells[i]?.textContent.trim();
-      if (val && val !== "-") {
-        hints[letter][len] = parseInt(val, 10);
+    for (let i = 1; i < cells.length; i++) { 
+      const headerText = headers[i]?.textContent.trim();
+
+      // Check if this column is a number (word length)
+      if (!isNaN(parseInt(headerText, 10)) && parseInt(headerText, 10) >= 4 && parseInt(headerText, 10) <= 10) {
+        const len = parseInt(headerText, 10);
+        const val = cells[i]?.textContent.trim();
+        if (val && val !== "-") {
+          hints[letter][len] = parseInt(val, 10);
+        }
+      } else if (headerText === "∑" && i === sumColumnIndex) { 
+        const totalSumVal = cells[i]?.textContent.trim();
+        if (totalSumVal && totalSumVal !== "-") {
+          hints[letter].totalSum = parseInt(totalSumVal, 10);
+        }
       }
     }
   });
